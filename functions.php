@@ -89,4 +89,51 @@ function bootstrap_posted_on() {
     );
 }
 
+// Widgets
+
+add_action( 'widgets_init', 'bootstrap_register_widgets' );  
+
+function bootstrap_register_widgets() {  
+    register_widget('TDC_Twitter');
+}  
+
+class TDC_Twitter extends WP_Widget {
+    function TDC_Twitter() {
+        //parent::WP_Widget(false, 'Latest Tweets (The Design Collective)');
+        $widget_ops = array( 'classname' => 'twitter', 'description' => __('A widget that displays tweets for a twitter username.', 'bootstrap') );  
+        $control_ops = array( 'id_base' => 'twitter-widget' );  
+        $this->WP_Widget( 'twitter-widget', __('Latest Tweets (The Design Collective)', 'bootstrap'), $widget_ops, $control_ops );  
+
+    }
+    function form($instance) {
+        $title = esc_attr($instance['title']);  
+        print "<p><label for=\"".$this->get_field_id('title')."\">".__('Title:','bootstrap')."<input class=\"widefat\" id=\"".$this->get_field_id('title')."\" name=\"".$this->get_field_name('title')."\" type=\"text\" value=\"".$title."\" /></label></p>";
+    }
+    function update($new_instance, $old_instance) {
+        // processes widget options to be saved
+        return $new_instance;
+    }
+    function widget($args, $instance) { 
+        extract( $args );   //this turns ['array keys'] into $variables
+
+        $title = apply_filters('widget_title', $instance['title'] );  
+        $name = $instance['name'];  
+        $show_info = isset( $instance['show_info'] ) ? $instance['show_info'] : false;  
+        echo $before_widget;  
+        // Display the widget title  
+        if ( $title )  
+            echo $before_title . $title . $after_title;  
+        //Display the name  
+        if ( $name )  
+            printf( '<p>' . __('Hey their Sailor! My name is %1$s.', 'example') . '</p>', $name );  
+        if ( $show_info )  
+            printf( $name );  
+        echo $after_widget;        
+
+        // print $args['before_widget'];
+        // print $args['before_title'] . $instance['title'] . $args['after_title'];  
+        // print $args['after_widget'];
+        // print "<p>Lorem ipsum dolor sit amet.</p>";
+    }
+}
 
